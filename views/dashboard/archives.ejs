@@ -1,0 +1,78 @@
+<% extend('../layouts/dashboard-layout') %>
+
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <% if (hasErrors) { %>
+      <% for (var prop in messages) { %>
+        <div class="alert alert-warning">
+          <%- messages[prop] %>
+        </div>
+      <% } %>
+    <% } %>
+
+    <% if (articles === null) { %>
+      <div class="alert alert-warning">
+        目前沒有文章喔
+      </div>
+    <% } %>
+
+    <div class="btn-group w-100">
+      <a href="/dashboard/archives?status=public" class="btn btn-outline-secondary w-100 rounded-0 <% if(status === 'public') { %><%= 'active' %><% } %>">已發佈</a>
+      <a href="/dashboard/archives?status=draft" class="btn btn-outline-secondary w-100 rounded-0 <% if(status === 'draft') { %><%= 'active' %><% } %>">草稿</a>
+      <a href="/dashboard/article/create" class="btn btn-primary">新增文章</a>
+    </div>
+
+    <% for (var prop in articles) { %>
+      <div class="card my-3">
+        <h4 class="card-header">
+          <%= articles[prop].title %>
+        </h4>
+        <div class="card-body">
+          <%- striptags(articles[prop].content).slice(0, 150) %>...
+          <div>
+            <span class="fa fa-clock-o"></span> 
+            <%= moment(articles[prop].update_time*1000).format('YYYY/MM/DD'); %>
+            ,
+            <span class="fa fa-folder-open-o"></span>
+            <span>
+              <% if (categories.hasOwnProperty(articles[prop].category)) { %>
+                <%= categories[articles[prop].category].name %>
+              <% } else { %>
+                沒有分類
+              <% } %>
+            </span>
+          </div>
+        </div>
+        <div class="card-footer p-0 btn-group">
+          <a href="#" class="btn btn-outline-danger rounded-0 deletePost" data-id="<%- articles[prop].id %>" data-title="<%- articles[prop].title %>">刪除</a>
+          <a href="/dashboard/article/<%= articles[prop].id %>" class="btn btn-outline-secondary w-100 rounded-0">編輯</a>
+          <% if (status == 'public') { %>
+          <a href="/post/<%- articles[prop].id %>" target="_blank" class="btn btn-outline-secondary w-100 rounded-0">預覽</a>
+          <% } %>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<script>
+//使用 Ajax 方式來刪除文章
+  $(document).ready(function() {
+    $('.deletePost').on('click', function(e) {
+      e.preventDefault(); //終止預設表單傳送行為( 原本按下click就 post出去)
+      var id = $(this).data('id'); //取出要刪除該文章的 id      
+      var title = $(this).data('title'); //取出要刪除該文章的 title  
+      if (confirm('確認是否刪除' + title)) { //跳出一個警告視窗，再次確認是否要刪除
+        $.ajax({
+          url: '/dashboard/article/' + id,//前端 -> 後端資料庫 (刪除該id文章)
+          method: 'DELETE'
+        }).done(function(data) {
+          window.location = data.url; //做完之後重新導到 http://localhost:3000/dashboard/archives        
+        });
+      }
+      
+    });
+  });
+</script>
+
+<%- include('../partials/pagination') %>
