@@ -27,7 +27,6 @@ const articlesRef = firebaseDb.ref(articlesPath);
 router.get('/', (req, res) => { //  在這個頁面 http://http://localhost:3000/
   const currentPage = Number.parseInt(req.query.page, 10) || 1; // 每頁顯示10篇文章
   let categories = {};
-
   categoriesRef.once('value').then((snapshot) => {
     categories = snapshot.val();
     return articlesRef.orderByChild('update_time').once('value');

@@ -3,13 +3,13 @@ const path = require('path'); // path 模塊提供了一些工具函數，用於
 const favicon = require('serve-favicon'); // serve-favicon的中間件，可以用於請求網頁的logo
 const logger = require('morgan'); // morgan是express默認的日誌中間件，也可以脫離express，作為node.js的日誌組件單獨使用
 const cookieParser = require('cookie-parser'); // 解析 cookie
-const bodyParser = require('body-parser'); // 前端表單資料解析並傳到後端伺服器 app.js
-const firebase = require('firebase'); // 資料庫使用
+const bodyParser = require('body-parser'); // 前端表單資料解析 bodyparse並傳到後端伺服器 app.js
+const firebase = require('firebase'); // 使用 firebase資料庫
 const flash = require('connect-flash'); // 提示使用者及時訊息 ex:您已登入、該欄位已刪除、文章已發表
 const session = require('express-session'); // 給會員一個專屬的會員證 session id
 
 // routes 路由設定
-const index = require('./routes/index.js');
+const index = require('./routes/index.js'); // 等同於 const index = require('index')，require()函式會自己去找index.js檔案位置
 const auth = require('./routes/auth.js');
 const dashboard = require('./routes/dashboard.js');
 require('dotenv').config(); // 使用dotenv()套件來讀取環境變數
